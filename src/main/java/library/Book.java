@@ -29,7 +29,7 @@ public class Book {
         return isCheckedOut;
     }
 
-    public String getCheackedOutTo() {
+    public String getCheckedOutTo() {
         return cheackedOutTo;
     }
 

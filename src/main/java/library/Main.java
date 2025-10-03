@@ -33,13 +33,8 @@ public class Main {
     }
 
     public static void menu(Scanner scanner, Book[] books) {
-        /**
-         * The Store Home Screen - The home screen should display a list of options that a user can choose from.
-         * •Show Available Books
-         * •Show Checked Out Books
-         * •Exit - closes out of the application
-         * */
-
+        //This is the menu method
+        //Every time it's called this will display:
         while (true) {
             System.out.println("Choose an option:");
             System.out.println("1) Available Books");
@@ -50,14 +45,18 @@ public class Main {
 
             switch (choice) {
                 case 1:
+                    //gets send to all books that available and is able to check out
                     availableBooks(scanner, books);
                     break;
                 case 2:
+                    //gets send to all unavailable books and is ale to check in books
                     unavailableBooks(scanner, books);
                     break;
                 case 3:
+                    //exits program
                     System.exit(0);
                 default:
+                    //if there is an invalid choice it will run the menu
                     System.out.println("Invalid choice");
                     menu(scanner, books);
                     break;
@@ -68,13 +67,7 @@ public class Main {
     }
 
     public static void availableBooks(Scanner scanner, Book[] books) {
-        /**
-         * Show Available Books - Displays a list of all books that are not currently checked out. Display the Id, ISBN and Title of the book.
-         * o Prompt the user to either select a book to check out, or exit to go back to the home screen
-         * o If the user wants to check out a book, prompt them for their name
-         * o Then check out the book
-         * */
-
+        // Will display all Available books
         System.out.println("\n\nAvailable Books: \n");
 
         System.out.printf("%-5s %-45s %-20s \n", "ID", "Tile", "ISBN");
@@ -89,21 +82,28 @@ public class Main {
                 continue;
             }
         }
-        System.out.println("----------------------------------------------------------------------\n");
+        System.out.println("----------------------------------------------------------------------");
+        //Asks the user to see if they want to check out or if they want ot go back to the main menu
+
         System.out.println("\n1) Check out book");
         System.out.println("2) Back");
         System.out.print("--> ");
         int choice = scanner.nextInt();
         switch (choice) {
             case 1:
+                //Asks user for its name and send it to check out method
+
                 System.out.print("Enter your name: ");
                 String name = scanner.next();
                 checkOutBook(scanner, books, name);
                 break;
             case 2:
+                //send user back to the menu
                 menu(scanner, books);
 
             default:
+                //reprints this menu in invalid choice
+
                 System.out.println("Invalid choice");
                 availableBooks(scanner, books);
         }
@@ -111,25 +111,19 @@ public class Main {
     }
 
     public static void unavailableBooks(Scanner scanner, Book[] books) {
-        /**
-         *Show Checked Out books - This displays a list of all the books that are currently checked out. Display the ID, ISBN, Title and Name of the person who has the book checked out.
-         * Prompt the user to
-         * o C - to Check In a book
-         * o X - to go back to the home screen
-         * */
-
+       //Displays all un available books and who checked them out
         System.out.println("\n\nUnavailable  Books:\n ");
         System.out.printf("%-5s %-45s %-20s %-30s \n", "ID", "Tile", "ISBN", "Checked out to");
         System.out.println("-------------------------------------------------------------------------------------------------");
 
         for (Book book : books) {
             if (book.isCheckedOut()) {
-                System.out.printf("%-5d %-45s %-20s %-30s \n", book.getId(), book.getTitle(), book.getIsbn(), book.getCheackedOutTo());
+                System.out.printf("%-5d %-45s %-20s %-30s \n", book.getId(), book.getTitle(), book.getIsbn(), book.getCheckedOutTo());
             }
         }
         System.out.println("-------------------------------------------------------------------------------------------------");
 
-
+        //Asks the user if they want to check in a book or go back to the menu
         System.out.println("1) Check in a book");
         System.out.println("2) Back");
         System.out.print("--> ");
@@ -137,12 +131,15 @@ public class Main {
 
         switch (choice) {
             case 1:
+                //send them to check in book
                checkInBooks(scanner, books);
                 break;
             case 2:
+                //sends them back to menu
                 menu(scanner, books);
                 break;
             default:
+                //lets them make a choice again if they messed up
                 System.out.println("Invalid choice");
                 unavailableBooks(scanner, books);
                 break;
@@ -150,58 +147,72 @@ public class Main {
     }
 
     public static void checkInBooks(Scanner scanner, Book[] books) {
+        //Enter the ID of the books they want to check in
         System.out.print("\nEnter ID of book: ");
         int id = scanner.nextInt();
+
         for (Book book : books) {
-            if (book.getId() == id) {
+            if(book.getId() == id &&  book.isCheckedOut()) {
                 book.checkIn();
-                System.out.println("Successfully checked in book!\n\n");
+                System.out.println("Successfully checked in:  " + book.getTitle());
+                break;
             }else{
-                System.out.println("Invalid ID");
-                continue;
+                //If selected book doesn't meet both condition the user will have to try again
+                System.out.println("Invalid ID or Book was never checked out, Please try again!");
+                checkInBooks(scanner, books);
             }
         }
-        System.out.println("1) Check in another book");
+        //Will ask if they want to check in another book
+        System.out.println("\n1) Check in another book");
         System.out.println("2) Back");
         System.out.print("--> ");
         int choice = scanner.nextInt();
         switch (choice) {
             case 1:
+                //Sends them back to beginning of this menu
                 checkInBooks(scanner, books);
                 break;
             case 2:
+                //Send them back to the main menu
                 menu(scanner, books);
                 break;
         }
     }
 
     public static void checkOutBook(Scanner scanner, Book[] books, String name) {
+        //Prompts user to enter hte ID of the book they want ot check out
         System.out.print("Enter id of book: ");
         int id = scanner.nextInt();
 
         for (Book book : books) {
             if (book.getId() == id) {
                 if (book.isCheckedOut()) {
+                    //If the ID of the book they want ot check out == a book that already has been checked out it will throw and exception and make them choose another book
+
                     System.out.println("This Book is unavailable!");
                     continue;
                 } else {
+                    // Will assign the persons name to the book they want to check out
                     book.checkOut(name);
                     System.out.printf("%s check out %s successfully , Enjoy!\n", name, book.getTitle());
                 }
             }
         }
-
-        System.out.println("\n0) Main menu");
-        System.out.println("1) Check out another book");
+        // will ask if they want to check out again
+        System.out.println("\n1) Main menu");
+        System.out.println("2) Check out another book");
         System.out.print("--> ");
         int choice = scanner.nextInt();
         switch (choice) {
-            case 0:
-                menu(scanner, books);
             case 1:
+                // will send them back to the main menu
+                menu(scanner, books);
+            case 2:
+                // will go back to the beginning of this method with the updated information
                 checkOutBook(scanner, books, name);
                 break;
             default:
+                //will send them back to the menu
                 System.out.println("Invalid choice");
                 menu(scanner, books);
         }
